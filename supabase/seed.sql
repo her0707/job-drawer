@@ -1,0 +1,19 @@
+-- Replace the placeholder user id before running this seed file locally.
+-- Supabase auth.users rows are owned by Supabase Auth, so this script avoids
+-- inserting invalid foreign keys by default.
+--
+-- insert into applications (
+--   user_id,
+--   company,
+--   role,
+--   channel,
+--   status,
+--   applied_at,
+--   last_contact_at,
+--   resume_version,
+--   next_action
+-- ) values
+--   ('<auth-user-id>', 'A회사', 'Product Manager', 'wanted', 'screening', now() - interval '12 days', now() - interval '2 days', 'PM_resume_v3.pdf', '면접 가능 일정 회신'),
+--   ('<auth-user-id>', 'B회사', 'Product Owner', 'company_site', 'applied', now() - interval '18 days', now() - interval '14 days', 'PO_resume_v2.pdf', null),
+--   ('<auth-user-id>', 'C회사', 'Backend Engineer', 'linkedin', 'assignment_or_test', now() - interval '7 days', now() - interval '1 day', 'BE_resume_v1.pdf', '과제 제출'),
+--   ('<auth-user-id>', 'D회사', 'Data Analyst', 'saramin', 'rejected', now() - interval '31 days', now() - interval '6 days', 'DA_resume_v1.pdf', null);

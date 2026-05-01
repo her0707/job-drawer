@@ -1,0 +1,11 @@
+node_modules/
+.codex
+node_modules.npm-backup/
+.next/
+.npm-cache/
+npm-cache.npm-backup/
+.pnpm-store/
+*.tsbuildinfo
+.env
+.env*.local
+supabase/.temp/

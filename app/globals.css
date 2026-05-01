@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --canvas: 0.985 0 0;
+  --panel: 0.999 0 0;
+  --panel-2: 0.955 0 0;
+  --ink: 0.145 0 0;
+  --muted: 0.44 0 0;
+  --subtle: 0.66 0 0;
+  --line: 0.89 0 0;
+  --line-strong: 0.76 0 0;
+  --accent: 0.145 0 0;
+  --accent-ink: 0.995 0 0;
+  --accent2: 0.36 0 0;
+  --good: 0.40 0 0;
+  --warn: 0.48 0 0;
+  --danger: 0.33 0 0;
+  --shadow: 0.16 0 0;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space-3xl: 3rem;
+  --space-4xl: 4rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.5rem;
+  --font-display: var(--font-body);
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: oklch(var(--canvas));
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  color: oklch(var(--ink));
+  background: oklch(var(--canvas));
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  color: oklch(var(--accent-ink));
+  background: oklch(var(--accent));
+}
+
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: oklch(var(--accent));
+}
+
+@layer components {
+  .type-display {
+    font-family: var(--font-display);
+    letter-spacing: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: oklch(var(--muted));
+  }
+
+  .surface {
+    border: 1px solid oklch(var(--line));
+    background: oklch(var(--panel));
+    box-shadow: 0 14px 42px oklch(var(--shadow) / 0.06);
+  }
+
+  .surface-flat {
+    border: 1px solid oklch(var(--line));
+    background: oklch(var(--panel));
+  }
+
+  .paper {
+    border: 1px solid oklch(var(--line));
+    background: oklch(var(--panel));
+  }
+
+  .inset-panel {
+    border: 1px solid oklch(var(--line));
+    background: oklch(var(--panel-2));
+  }
+
+  .hairline-table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .hairline-table th {
+    border-bottom: 1px solid oklch(var(--line-strong));
+    color: oklch(var(--muted));
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .hairline-table td {
+    border-bottom: 1px solid oklch(var(--line));
+  }
+
+  .hairline-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .numeric {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+  }
+}
