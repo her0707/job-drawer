@@ -68,6 +68,10 @@ export async function ApplicationDetailScreen({ id }: { id: string }) {
               <dt className="font-bold text-muted">메모</dt>
               <dd className="mt-1 whitespace-pre-wrap">{application.data.memo ?? "-"}</dd>
             </div>
+            <div>
+              <dt className="font-bold text-muted">공고 스냅샷</dt>
+              <dd className="mt-1 whitespace-pre-wrap">{application.data.job_post_snapshot ?? "-"}</dd>
+            </div>
           </dl>
         </section>
       </div>

@@ -40,6 +40,7 @@ export async function POST(request: Request) {
       applied_at: (body.applied_at as string) || null,
       deadline_at: (body.deadline_at as string) || null,
       job_post_url: (body.job_post_url as string) || null,
+      job_post_snapshot: (body.job_post_snapshot as string) || null,
       resume_version: (body.resume_version as string) || null,
       portfolio_version: (body.portfolio_version as string) || null,
       priority: Number(body.priority ?? 3),
