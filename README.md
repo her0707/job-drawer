@@ -45,9 +45,11 @@ GMAIL_CLIENT_ID=
 GMAIL_CLIENT_SECRET=
 GMAIL_REDIRECT_URI=http://localhost:3000/api/gmail/callback
 TOKEN_ENCRYPTION_KEY=
+CRON_SECRET=
 ```
 
 `TOKEN_ENCRYPTION_KEY`는 32자 이상을 권장합니다. Gmail provider token 암호화에 사용되며 클라이언트에 노출하면 안 됩니다.
+`CRON_SECRET`은 Vercel Cron이 Gmail 자동 동기화 API를 호출할 때 사용하는 서버 전용 bearer token입니다.
 
 ## Supabase Setup
 
@@ -84,6 +86,23 @@ http://localhost:3000/auth/callback
 
 Gmail readonly scope는 Google 민감 scope입니다. 개인용 테스트는 Google Cloud test user로 시작하고, 공개 배포 전에는 verification과 privacy policy가 필요합니다.
 
+## Vercel Cron Gmail Sync
+
+`vercel.json`은 30분마다 `/api/cron/gmail-sync`를 호출하도록 설정되어 있습니다. 이 경로는 `CRON_SECRET` bearer token이 없으면 실행되지 않습니다.
+
+Vercel 프로젝트 환경 변수에 다음 값을 설정합니다.
+
+```env
+CRON_SECRET=<random-strong-secret>
+```
+
+Vercel은 `CRON_SECRET`이 있으면 cron 요청에 `Authorization: Bearer <secret>` 헤더를 자동으로 포함합니다. 로컬에서 수동 확인할 때는 다음처럼 호출할 수 있습니다.
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  http://localhost:3000/api/cron/gmail-sync
+```
+
 ## Scripts
 
 ```bash
@@ -114,7 +133,7 @@ tests/               parser and matching tests
 
 ## Notes
 
-- 자동 동기화는 30분 주기 운영을 목표로 설계했습니다. 현재 UI에서는 수동 동기화 버튼을 통해 검증할 수 있습니다.
+- 자동 동기화는 Vercel Cron으로 30분마다 실행됩니다. UI에서는 수동 동기화 버튼으로도 검증할 수 있습니다.
 - Gmail 동기화는 연동 이후 시점의 메일만 대상으로 삼습니다.
 - 원문 메일은 `raw_text`에 저장되며, 수신함에서 확인하거나 필요 시 삭제할 수 있습니다.
 - 카카오톡 직접 연동은 MVP 범위가 아니며 붙여넣기 입력만 지원합니다.

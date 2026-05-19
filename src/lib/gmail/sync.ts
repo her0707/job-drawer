@@ -9,7 +9,7 @@ import {
 } from "./client";
 import { shouldStoreRecruitingMail } from "./recruitingFilter";
 
-type EmailAccount = {
+export type EmailAccount = {
   id: string;
   user_id: string;
   access_token_encrypted: string | null;
@@ -19,13 +19,38 @@ type EmailAccount = {
   created_at: string;
 };
 
+type GmailSyncResult = {
+  fetchedCount: number;
+  createdInboxCount: number;
+};
+
+type CronAccountSyncResult = {
+  accountId: string;
+  userId: string;
+  status: "success" | "failed";
+  fetchedCount: number;
+  createdInboxCount: number;
+  errorMessage?: string;
+};
+
+type CronGmailSyncSummary = {
+  accountCount: number;
+  successCount: number;
+  failureCount: number;
+  fetchedCount: number;
+  createdInboxCount: number;
+  results: CronAccountSyncResult[];
+};
+
 function toValidDate(value: string | null | undefined, fallback: Date) {
   if (!value) return fallback;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? fallback : date;
 }
 
-export async function syncGmailAccount(account: EmailAccount) {
+export async function syncGmailAccount(
+  account: EmailAccount,
+): Promise<GmailSyncResult> {
   if (!account.refresh_token_encrypted) {
     throw new Error("Missing Gmail refresh token.");
   }
@@ -157,4 +182,66 @@ export async function syncGmailAccount(account: EmailAccount) {
 
     throw error;
   }
+}
+
+export async function syncGmailAccountsForCron(
+  accounts: EmailAccount[],
+  syncAccount: (account: EmailAccount) => Promise<GmailSyncResult> = syncGmailAccount,
+): Promise<CronGmailSyncSummary> {
+  const results: CronAccountSyncResult[] = [];
+
+  for (const account of accounts) {
+    try {
+      const result = await syncAccount(account);
+      results.push({
+        accountId: account.id,
+        userId: account.user_id,
+        status: "success",
+        fetchedCount: result.fetchedCount,
+        createdInboxCount: result.createdInboxCount,
+      });
+    } catch (error) {
+      results.push({
+        accountId: account.id,
+        userId: account.user_id,
+        status: "failed",
+        fetchedCount: 0,
+        createdInboxCount: 0,
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  const successCount = results.filter((result) => result.status === "success").length;
+  const failureCount = results.length - successCount;
+
+  return {
+    accountCount: accounts.length,
+    successCount,
+    failureCount,
+    fetchedCount: results.reduce((total, result) => total + result.fetchedCount, 0),
+    createdInboxCount: results.reduce(
+      (total, result) => total + result.createdInboxCount,
+      0,
+    ),
+    results,
+  };
+}
+
+export async function syncEnabledGmailAccountsForCron() {
+  const supabase = createServiceSupabaseClient();
+  const { data, error } = await supabase
+    .from("email_accounts")
+    .select(
+      "id,user_id,access_token_encrypted,refresh_token_encrypted,token_expires_at,last_synced_at,created_at",
+    )
+    .eq("provider", "gmail")
+    .eq("sync_enabled", true)
+    .order("updated_at", { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return syncGmailAccountsForCron((data ?? []) as EmailAccount[]);
 }
